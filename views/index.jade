@@ -1,5 +1,13 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+    h1= title
+    div
+        big Background: 
+        button(onclick="changeBG('castle', 'jpg')") Castle
+        button(onclick="changeBG('alps', 'jpg')") Swiss
+        button(onclick="changeBG('trafalgar', 'jpg')") Trafalgar
+        button(onclick="changeBG('grey', 'png')") Grey
+        button(onclick="changeBG('blue', 'png')") Light Blue
+    div#canvasContainer
+        canvas#canvas

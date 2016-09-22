@@ -1,8 +1,8 @@
 require(['config'], function() {
 
-    require(['jquery', 'three'], function($, THREE) {
-        console.log($);
-        console.log(THREE);
+    require(['render'], function(Render) {
+        Render.start();
+        Render.changeModel('malik', 'vertex');
     });
 
 });
