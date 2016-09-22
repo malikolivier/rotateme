@@ -1,32 +1,39 @@
 extends layout
 
 block content
-    h1= title
-    div.form-horizontal
+    h2.title= title
+    div.form-horizontal.small
         div.form-group
-            label.control-label.col-sm-2 Choose your background: 
-            div.col-sm-10
+            label.control-label.col-sm-3 Choose your background: 
+            div.col-sm-5
                 button(onclick="changeBG('castle', 'jpg')") Castle
                 button(onclick="changeBG('alps', 'jpg')") Swiss
                 button(onclick="changeBG('trafalgar', 'jpg')") Trafalgar
                 button(onclick="changeBG('grey', 'png')") Grey
                 button(onclick="changeBG('blue', 'png')") Light Blue
+                
+            div.col-sm-4 Controls:
+                ul
+                    li Right-Click OR 1-finger: Rotate
+                    li Scroll OR 2-finger: Zoom in/out
+                    li Left-Click OR 3-finger: Pan
         div.form-group
-            label.control-label.col-sm-2 Select mesh auto-rotate speed: 
-            div.col-sm-10
+            label.control-label.col-sm-3 Select mesh auto-rotate speed: 
+            div.col-sm-9
                 input.form-control(id="auto-rotate-speed-slider" type="range" min="-0.02" max="0.02" step="0.001" onchange="setAutoRotateSpeed(this.value)")
         div.form-group
-            label.control-label.col-sm-2 Select camera auto-rotate speed: 
-            div.col-sm-10
-                input.form-control(type="range" min="-2" max="2" step="0.1" value="2" onchange="setCameraAutoRotateSpeed(this.value)")
+            label.control-label.col-sm-3 Select camera auto-rotate speed: 
+            div.col-sm-9
+                input.form-control(type="range" min="-2" max="2" step="0.1" value="1" onchange="setCameraAutoRotateSpeed(this.value)")
         div.form-group
-            label.control-label.col-sm-2 Record: 
-            div.col-sm-10
+            label.control-label.col-sm-3 Record: 
+            div.col-sm-9
                 button(onclick="takeSnapshot()") Snapshot
                 button(onclick="takeVideoSnapshot()") Video Snapshot
+                span &nbsp;(Click once to start and once again on the video button to record a video)
         div.form-group
-            label.control-label.col-sm-2 Load a PLY file: 
-            div.col-sm-10
+            label.control-label.col-sm-3 Load a PLY file: 
+            div.col-sm-9
                 input.form-control(type="file" id="plyFileInput")
     div#canvasContainer
         canvas#canvas

@@ -1,8 +1,10 @@
 define(['three', 'jquery', './whammy', './OrbitControls', './PLYLoader'], function(THREE, $, Whammy) {
+    var CENTER_Y = 0.85;
     var Render = {
         debugging: false,
         // shaderLoaded: function called back when shaders are finished loading
         start: function(shaderLoaded) {
+
             this.measure = "off";
             var self = this;
             var camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.01, 10e20);
@@ -79,6 +81,7 @@ define(['three', 'jquery', './whammy', './OrbitControls', './PLYLoader'], functi
             controls.minPolarAngle = Math.PI / 2;
             controls.maxPolarAngle = Math.PI / 2;
             controls.autoRotate = true;
+            controls.autoRotateSpeed = 1;
             camera.position.set(0, 0.9, 3);
             // End orbit controls
 
@@ -250,7 +253,7 @@ define(['three', 'jquery', './whammy', './OrbitControls', './PLYLoader'], functi
             };
             this.resetCamera = function() {
                 camera.position.x = 0;
-                camera.position.y = 0.85;
+                camera.position.y = CENTER_Y;
                 camera.position.z = 3;
                 camera.rotation.x = 0;
                 camera.rotation.y = 0;
@@ -346,7 +349,9 @@ define(['three', 'jquery', './whammy', './OrbitControls', './PLYLoader'], functi
                     child.geometry.computeVertexNormals();
                   }
                 });
-                mesh.box = new THREE.Box3().setFromObject(mesh);
+
+                var newBox = new THREE.Box3().setFromObject(mesh)
+                mesh.position.y += newBox.getSize().y / 2 + CENTER_Y/2;
 
                 var scene = Render.getScene();
                 scene.remove(scene.getObjectByName("human"));

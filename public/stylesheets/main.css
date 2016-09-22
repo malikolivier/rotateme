@@ -4,3 +4,7 @@ canvas {
     position: absolute;
     background-color: black;
 }
+
+.title {
+    padding-left: 100px;
+}
