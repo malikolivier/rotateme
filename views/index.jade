@@ -12,13 +12,21 @@ block content
                 button(onclick="changeBG('grey', 'png')") Grey
                 button(onclick="changeBG('blue', 'png')") Light Blue
         div.form-group
-            label.control-label.col-sm-2 Select auto-rotate speed: 
+            label.control-label.col-sm-2 Select mesh auto-rotate speed: 
             div.col-sm-10
                 input.form-control(id="auto-rotate-speed-slider" type="range" min="-0.02" max="0.02" step="0.001" onchange="setAutoRotateSpeed(this.value)")
+        div.form-group
+            label.control-label.col-sm-2 Select camera auto-rotate speed: 
+            div.col-sm-10
+                input.form-control(type="range" min="-2" max="2" step="0.1" value="2" onchange="setCameraAutoRotateSpeed(this.value)")
         div.form-group
             label.control-label.col-sm-2 Record: 
             div.col-sm-10
                 button(onclick="takeSnapshot()") Snapshot
                 button(onclick="takeVideoSnapshot()") Video Snapshot
+        div.form-group
+            label.control-label.col-sm-2 Load a PLY file: 
+            div.col-sm-10
+                input.form-control(type="file" id="plyFileInput")
     div#canvasContainer
         canvas#canvas

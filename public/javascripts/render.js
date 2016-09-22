@@ -1,4 +1,4 @@
-define(['three', 'jquery', './whammy', './OrbitControls'], function(THREE, $, Whammy) {
+define(['three', 'jquery', './whammy', './OrbitControls', './PLYLoader'], function(THREE, $, Whammy) {
     var Render = {
         debugging: false,
         // shaderLoaded: function called back when shaders are finished loading
@@ -78,6 +78,7 @@ define(['three', 'jquery', './whammy', './OrbitControls'], function(THREE, $, Wh
             controls.enableDamping = true;
             controls.minPolarAngle = Math.PI / 2;
             controls.maxPolarAngle = Math.PI / 2;
+            controls.autoRotate = true;
             camera.position.set(0, 0.9, 3);
             // End orbit controls
 
@@ -131,7 +132,7 @@ define(['three', 'jquery', './whammy', './OrbitControls'], function(THREE, $, Wh
             }
 
             var takeSnapshot = false,
-                imgData;
+                imgData, anchor;
             var takeVideoSnapshot = false,
                 stopVideoSnapshot = false,
                 encoder = null,
@@ -161,10 +162,9 @@ define(['three', 'jquery', './whammy', './OrbitControls'], function(THREE, $, Wh
                     imgData = renderer.domElement.toDataURL();
                     var imgBlob = dataURItoBlob(imgData);
                     saveSnapshot(imgBlob, "png");
-                    var anchor = document.createElement('a');
+                    anchor = document.createElement('a');
                     anchor.href = imgData;
-                    var fileName = "snapshot.png";
-                    anchor.setAttribute('download', fileName);
+                    anchor.setAttribute('download', "snapshot.png");
                     anchor.setAttribute('target', '_blank');
                     // The element must be appended to the DOM for it to work on Firefox
                     document.body.appendChild(anchor);
@@ -191,10 +191,9 @@ define(['three', 'jquery', './whammy', './OrbitControls'], function(THREE, $, Wh
                             alert("Snapshot saved to storage!");
                         });
                         var url = window.URL.createObjectURL(output);
-                        var anchor = document.createElement('a');
+                        anchor = document.createElement('a');
                         anchor.href = url;
-                        var fileName = "snapshot.webm";
-                        anchor.setAttribute('download', fileName);
+                        anchor.setAttribute('download', "snapshot.webm");
                         anchor.setAttribute('target', '_blank');
                         // The element must be appended to the DOM for it to work on Firefox
                         document.body.appendChild(anchor);
@@ -279,6 +278,12 @@ define(['three', 'jquery', './whammy', './OrbitControls'], function(THREE, $, Wh
             this.setAutoRotateSpeed = function(speed) {
                 autoRotateSpeed = speed;
             };
+            this.setCameraAutoRotate = function(rotate) {
+                controls.autoRotate = rotate;
+            };
+            this.setCameraAutoRotateSpeed = function(speed) {
+                controls.autoRotateSpeed = speed;
+            }
 
         },
 
@@ -309,7 +314,7 @@ define(['three', 'jquery', './whammy', './OrbitControls'], function(THREE, $, Wh
                         faceMaterial = new THREE.MultiMaterial(materials);
                         humanMesh = new THREE.Mesh(geometry, faceMaterial);
                     } else {
-                        throw "Unkown texture type as argument: " + textures;
+                        throw "Unknown texture type as argument: " + textures;
                     }
                     humanMesh.name = "human";
                     // Set material to DoubleSide to enable raycasting from within the mesh
@@ -321,8 +326,36 @@ define(['three', 'jquery', './whammy', './OrbitControls'], function(THREE, $, Wh
             };
         })(),
 
+        changeModelToPly: (function() {
+            var loader = new THREE.PLYLoader();
+            return function(data) {
+                var geometry = loader.parse(data);
+                var material = new THREE.MeshLambertMaterial({
+                    vertexColors: THREE.VertexColors
+                });
+                var mesh = new THREE.Mesh( geometry, material );
+                mesh.rotateY(Math.PI/2);
+                mesh.name = "human";
+                mesh.box = new THREE.Box3().setFromObject(mesh);
+                var scalingFactor = 1/(Math.max(mesh.box.getSize().x, mesh.box.getSize().y, mesh.box.getSize().z));
+                mesh.scale.set(scalingFactor, scalingFactor, scalingFactor);
+                // Computer Vertex Normals to display the object properly
+                mesh.traverse( function ( child ) {
+                  if ( child instanceof THREE.Mesh ) {
+                    child.geometry.computeFaceNormals();
+                    child.geometry.computeVertexNormals();
+                  }
+                });
+                mesh.box = new THREE.Box3().setFromObject(mesh);
+
+                var scene = Render.getScene();
+                scene.remove(scene.getObjectByName("human"));
+                scene.add(mesh);
+            };
+        })(),
+
         moveMesh: function(direction) {
-            var mesh = Render.getMesh()
+            var mesh = Render.getMesh();
             if (mesh) {
                 mesh.rotation.y += Math.PI / 2 * direction;
             }
@@ -336,6 +369,8 @@ define(['three', 'jquery', './whammy', './OrbitControls'], function(THREE, $, Wh
         window.takeSnapshot = Render.takeSnapshot;
         window.takeVideoSnapshot = Render.takeVideoSnapshot;
         window.setAutoRotateSpeed = Render.setAutoRotateSpeed;
+        window.setCameraAutoRotate = Render.setCameraAutoRotate;
+        window.setCameraAutoRotateSpeed = Render.setCameraAutoRotateSpeed;
     }, 1000);
 
     return Render;

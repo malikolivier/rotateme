@@ -16,6 +16,14 @@ module.exports = function(grunt) {
         // this way we can use things like name and version (pkg.name)
         pkg: grunt.file.readJSON('package.json'),
 
+        jshint: {
+            options: {
+                reporter: require('jshint-stylish'), // use jshint-stylish to make our errors look and read good
+            },
+            // when this task is run, lint the Gruntfile and all js files in src
+            build: ['**/*.js', '!node_modules/**', '!public/javascripts/lib/**', '!dist/**', '!Gruntfile.js']
+        },
+
         bowerRequirejs: {
             target: {
                 rjsConfig: 'public/javascripts/config.js'
@@ -26,7 +34,9 @@ module.exports = function(grunt) {
             compileJS: {
                 options: {
                     shim: {
-                        "bootstrap": { "deps": ['jquery'] }
+                        "bootstrap": {
+                            "deps": ['jquery']
+                        }
                     },
                     baseUrl: 'public/javascripts',
                     mainConfigFile: 'public/javascripts/main.js',
@@ -76,12 +86,14 @@ module.exports = function(grunt) {
     // ===========================================================================
     // we can only load these if they are in our package.json
     // make sure you have run npm install so our app can find these
+    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-bower-requirejs');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-contrib-copy');
 
-    grunt.registerTask('default', ['bowerRequirejs', 'requirejs',
-        'exec:compileCSS', 'exec:removeDistDir', 'copy', 'exec:removeTmpFiles']);
+    grunt.registerTask('default', ['jshint', 'bowerRequirejs', 'requirejs',
+        'exec:compileCSS', 'exec:removeDistDir', 'copy', 'exec:removeTmpFiles'
+    ]);
 
 };

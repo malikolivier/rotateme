@@ -147,7 +147,7 @@ define((function(){
 				]
 			}
 		];
-		return generateEBML(EBML)
+		return generateEBML(EBML);
 	}
 
 	// sums the lengths of all the frames and gets the duration, woo
@@ -173,8 +173,8 @@ define((function(){
 	function numToBuffer(num){
 		var parts = [];
 		while(num > 0){
-			parts.push(num & 0xff)
-			num = num >> 8
+			parts.push(num & 0xff);
+			num = num >> 8;
 		}
 		return new Uint8Array(parts.reverse());
 	}
@@ -184,7 +184,7 @@ define((function(){
 
 		var arr = new Uint8Array(str.length);
 		for(var i = 0; i < str.length; i++){
-			arr[i] = str.charCodeAt(i)
+			arr[i] = str.charCodeAt(i);
 		}
 		return arr;
 		// this is slower
@@ -204,7 +204,7 @@ define((function(){
 		var pad = (bits.length % 8) ? (new Array(1 + 8 - (bits.length % 8))).join('0') : '';
 		bits = pad + bits;
 		for(var i = 0; i < bits.length; i+= 8){
-			data.push(parseInt(bits.substr(i,8),2))
+			data.push(parseInt(bits.substr(i,8),2));
 		}
 		return new Uint8Array(data);
 	}
@@ -231,7 +231,7 @@ define((function(){
 
 			ebml.push(numToBuffer(json[i].id));
 			ebml.push(bitsToBuffer(size));
-			ebml.push(data)
+			ebml.push(data);
 
 
 		}
@@ -252,7 +252,7 @@ define((function(){
 		var pad = (bits.length % 8) ? (new Array(1 + 8 - (bits.length % 8))).join('0') : '';
 		bits = pad + bits;
 		for(var i = 0; i < bits.length; i+= 8){
-			data += String.fromCharCode(parseInt(bits.substr(i,8),2))
+			data += String.fromCharCode(parseInt(bits.substr(i,8),2));
 		}
 		return data;
 	}
@@ -290,7 +290,7 @@ define((function(){
 			throw "TrackNumber > 127 not supported";
 		}
 		var out = [data.trackNum | 0x80, data.timecode >> 8, data.timecode & 0xff, flags].map(function(e){
-			return String.fromCharCode(e)
+			return String.fromCharCode(e);
 		}).join('') + data.frame;
 
 		return out;
@@ -318,7 +318,7 @@ define((function(){
 			height: height,
 			data: VP8,
 			riff: riff
-		}
+		};
 	}
 
 	// i think i'm going off on a riff by pretending this is some known
@@ -331,13 +331,14 @@ define((function(){
 	function parseRIFF(string){
 		var offset = 0;
 		var chunks = {};
+        var innerFunction = function(i){
+            var unpadded = i.charCodeAt(0).toString(2);
+            return (new Array(8 - unpadded.length + 1)).join('0') + unpadded;
+        };
 
 		while (offset < string.length) {
 			var id = string.substr(offset, 4);
-			var len = parseInt(string.substr(offset + 4, 4).split('').map(function(i){
-				var unpadded = i.charCodeAt(0).toString(2);
-				return (new Array(8 - unpadded.length + 1)).join('0') + unpadded
-			}).join(''),2);
+			var len = parseInt(string.substr(offset + 4, 4).split('').map(innerFunction).join(''),2);
 			var data = string.substr(offset + 4 + 4, len);
 			offset += 4 + 4 + len;
 			chunks[id] = chunks[id] || [];
@@ -359,13 +360,13 @@ define((function(){
 			new Uint8Array(
 				(
 					new Float64Array([num]) //create a float64 array
-				).buffer) //extract the array buffer
-			, 0) // convert the Uint8Array into a regular array
+				).buffer), //extract the array buffer
+			0) // convert the Uint8Array into a regular array
 			.map(function(e){ //since it's a regular array, we can now use map
-				return String.fromCharCode(e) // encode all the bytes individually
+				return String.fromCharCode(e); // encode all the bytes individually
 			})
 			.reverse() //correct the byte endianness (assume it's little endian for now)
-			.join('') // join the bytes in holy matrimony as a string
+			.join(''); // join the bytes in holy matrimony as a string
 	}
 
 	function WhammyVideo(speed, quality){ // a more abstract-ish API
@@ -382,27 +383,27 @@ define((function(){
 		this.frames.push({
 			image: frame,
 			duration: duration || this.duration
-		})
-	}
+		});
+	};
 
 	WhammyVideo.prototype.compile = function(){
 		return new toWebM(this.frames.map(function(frame){
 			var webp = parseWebP(parseRIFF(atob(frame.image.slice(23))));
 			webp.duration = frame.duration;
 			return webp;
-		}))
-	}
+		}));
+	};
 
 	return {
 		Video: WhammyVideo,
 		fromImageArray: function(images, fps){
 			return toWebM(images.map(function(image){
-				var webp = parseWebP(parseRIFF(atob(image.slice(23))))
+				var webp = parseWebP(parseRIFF(atob(image.slice(23))));
 				webp.duration = 1000 / fps;
 				return webp;
-			}))
+			}));
 		},
 		toWebM: toWebM
 		// expose methods of madness
-	}
-})())
+	};
+})());
