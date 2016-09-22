@@ -1,7 +1,11 @@
 require.config({
   baseUrl: '/javascripts',
   shim: {
-      "bootstrap": { "deps": ['jquery'] }
+    bootstrap: {
+      deps: [
+        'jquery'
+      ]
+    }
   },
   paths: {
     bootstrap: 'lib/bootstrap/dist/js/bootstrap',

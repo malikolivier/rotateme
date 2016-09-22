@@ -1,5 +1,10 @@
 //Gruntfile.js
 
+const BUILD_JS_TMP = 'public/build.js';
+const BUILD_CSS_TMP = 'public/build.css';
+
+const DIST_DIR = 'dist';
+
 module.exports = function(grunt) {
 
     // ===========================================================================
@@ -18,7 +23,7 @@ module.exports = function(grunt) {
         },
 
         requirejs: {
-            compile: {
+            compileJS: {
                 options: {
                     shim: {
                         "bootstrap": { "deps": ['jquery'] }
@@ -32,8 +37,35 @@ module.exports = function(grunt) {
                         jquery: 'lib/jquery/dist/jquery'
                     },
                     include: ['jquery', 'bootstrap', 'three'],
-                    out: 'public/javascripts/main.js'
+                    out: BUILD_JS_TMP
                 }
+            }
+        },
+
+        exec: {
+            compileCSS: 'r.js -o cssIn=public/stylesheets/main.css out=public/build.css',
+            removeDistDir: `rm -rf ${DIST_DIR}`,
+            removeTmpFiles: `rm ${BUILD_JS_TMP} ${BUILD_CSS_TMP}`
+        },
+
+        copy: {
+            dist: {
+                expand: true,
+                files: [{
+                    expand: true,
+                    cwd: '.',
+                    src: ['bin/**', 'routes/**', 'views/**', 'app.js'],
+                    dest: DIST_DIR
+                }, {
+                    src: BUILD_CSS_TMP,
+                    dest: `${DIST_DIR}/public/stylesheets/main.css`
+                }, {
+                    src: BUILD_JS_TMP,
+                    dest: `${DIST_DIR}/public/javascripts/main.js`
+                }, {
+                    src: 'public/javascripts/lib/requirejs/require.js',
+                    dest: `${DIST_DIR}/public/javascripts/lib/requirejs/require.js`
+                }]
             }
         }
     });
@@ -46,7 +78,10 @@ module.exports = function(grunt) {
     // make sure you have run npm install so our app can find these
     grunt.loadNpmTasks('grunt-bower-requirejs');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
+    grunt.loadNpmTasks('grunt-exec');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
-    grunt.registerTask('default', ['bowerRequirejs']);
+    grunt.registerTask('default', ['bowerRequirejs', 'requirejs',
+        'exec:compileCSS', 'exec:removeDistDir', 'copy', 'exec:removeTmpFiles']);
 
 };
