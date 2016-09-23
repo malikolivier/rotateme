@@ -1,6 +1,6 @@
 require(['config'], function() {
 
-    require(['render', 'jquery'], function(Render, $) {
+    require(['./render', 'jquery'], function(Render, $) {
         Render.start();
         Render.changeModel('malik', 'vertex');
 

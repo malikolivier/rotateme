@@ -33,21 +33,11 @@ module.exports = function(grunt) {
         requirejs: {
             compileJS: {
                 options: {
-                    shim: {
-                        "bootstrap": {
-                            "deps": ['jquery']
-                        }
-                    },
                     baseUrl: 'public/javascripts',
-                    mainConfigFile: 'public/javascripts/main.js',
-                    name: 'main',
-                    paths: {
-                        bootstrap: 'lib/bootstrap/dist/js/bootstrap',
-                        three: 'lib/three.js/build/three',
-                        jquery: 'lib/jquery/dist/jquery'
-                    },
-                    include: ['jquery', 'bootstrap', 'three'],
-                    out: BUILD_JS_TMP
+                    mainConfigFile: 'public/javascripts/config.js',
+                    out: BUILD_JS_TMP,
+                    name: "main",
+                    include: ["config", "main"]
                 }
             }
         },

@@ -286,7 +286,7 @@ define(['three', 'jquery', './whammy', './OrbitControls', './PLYLoader'], functi
             };
             this.setCameraAutoRotateSpeed = function(speed) {
                 controls.autoRotateSpeed = speed;
-            }
+            };
 
         },
 
@@ -350,7 +350,7 @@ define(['three', 'jquery', './whammy', './OrbitControls', './PLYLoader'], functi
                   }
                 });
 
-                var newBox = new THREE.Box3().setFromObject(mesh)
+                var newBox = new THREE.Box3().setFromObject(mesh);
                 mesh.position.y += newBox.getSize().y / 2 + CENTER_Y/2;
 
                 var scene = Render.getScene();
