@@ -1,32 +1,29 @@
-require(['config'], function() {
+var Render = require('./render');
+var $ = require('./lib/jquery/dist/jquery');
 
-    require(['./render', 'jquery'], function(Render, $) {
-        Render.start();
-        Render.changeModel('malik', 'vertex');
+Render.start();
+Render.changeModel('malik', 'vertex');
 
-        $(document).ready(function() {
-            var fileInput = document.getElementById('plyFileInput');
+$(document).ready(function() {
+    var fileInput = document.getElementById('plyFileInput');
 
-            fileInput.addEventListener('change', function(e) {
+    fileInput.addEventListener('change', function(e) {
 
-                // file selection is done you can now read the file
-                var file = this.files[0];
+        // file selection is done you can now read the file
+        var file = this.files[0];
 
-                // create a file reader
-                var reader = new FileReader();
+        // create a file reader
+        var reader = new FileReader();
 
-                // set on load handler for reader
-                reader.onload = function(e) {
-                    var result = reader.result;
+        // set on load handler for reader
+        reader.onload = function(e) {
+            var result = reader.result;
 
-                    // parse using your corresponding loader
-                    Render.changeModelToPly(result);
-                };
+            // parse using your corresponding loader
+            Render.changeModelToPly(result);
+        };
 
-                // read the file as text using the reader
-                reader.readAsArrayBuffer(file);
-            });
-        });
+        // read the file as text using the reader
+        reader.readAsArrayBuffer(file);
     });
-
 });

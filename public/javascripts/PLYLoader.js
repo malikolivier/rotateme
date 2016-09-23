@@ -26,7 +26,7 @@
  *
  */
 
-define(['three'], function(THREE) {
+module.exports = function(THREE) {
 
 
 THREE.PLYLoader = function ( manager ) {
@@ -498,4 +498,4 @@ THREE.PLYLoader.prototype = {
 
 };
 
-});
+};

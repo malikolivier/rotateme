@@ -4,7 +4,7 @@
 	vid.compile()
 */
 
-define((function(){
+module.exports = (function(){
 	// in this case, frames has a very specific meaning, which will be
 	// detailed once i finish writing the code
 
@@ -406,4 +406,4 @@ define((function(){
 		toWebM: toWebM
 		// expose methods of madness
 	};
-})());
+})();

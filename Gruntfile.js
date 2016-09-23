@@ -1,10 +1,5 @@
 //Gruntfile.js
 
-const BUILD_JS_TMP = 'public/build.js';
-const BUILD_CSS_TMP = 'public/build.css';
-
-const DIST_DIR = 'dist';
-
 module.exports = function(grunt) {
 
     // ===========================================================================
@@ -21,53 +16,53 @@ module.exports = function(grunt) {
                 reporter: require('jshint-stylish'), // use jshint-stylish to make our errors look and read good
             },
             // when this task is run, lint the Gruntfile and all js files in src
-            build: ['**/*.js', '!node_modules/**', '!public/javascripts/lib/**', '!dist/**', '!Gruntfile.js']
+            build: ['**/*.js', '!node_modules/**', '!public/javascripts/lib/**', '!dist/**', 'Gruntfile.js']
         },
 
-        bowerRequirejs: {
-            target: {
-                rjsConfig: 'public/javascripts/config.js'
-            }
-        },
-
-        requirejs: {
-            compileJS: {
-                options: {
-                    baseUrl: 'public/javascripts',
-                    mainConfigFile: 'public/javascripts/config.js',
-                    out: BUILD_JS_TMP,
-                    name: "main",
-                    include: ["config", "main"]
+        css_import: {
+            compile: {
+                files: {
+                    "dist/index.css": ['public/stylesheets/main.css']
                 }
             }
         },
 
-        exec: {
-            compileCSS: 'r.js -o cssIn=public/stylesheets/main.css out=public/build.css',
-            removeDistDir: `rm -rf ${DIST_DIR}`,
-            removeTmpFiles: `rm ${BUILD_JS_TMP} ${BUILD_CSS_TMP}`
+        pug: {
+            compile: {
+                files: {
+                    "dist/index.html": ['views/index.pug']
+                }
+            }
+        },
+
+        browserify: {
+            compile: {
+                files: {
+                    "dist/index.js": ['public/javascripts/main.js']
+                }
+            }
+        },
+
+        uglify: {
+            dist: {
+                files: {
+                    "dist/index.js": ["dist/index.js"]
+                }
+            }
         },
 
         copy: {
             dist: {
-                expand: true,
                 files: [{
                     expand: true,
-                    cwd: '.',
-                    src: ['bin/**', 'routes/**', 'views/**', 'app.js'],
-                    dest: DIST_DIR
-                }, {
-                    src: BUILD_CSS_TMP,
-                    dest: `${DIST_DIR}/public/stylesheets/main.css`
-                }, {
-                    src: BUILD_JS_TMP,
-                    dest: `${DIST_DIR}/public/javascripts/main.js`
-                }, {
-                    src: 'public/javascripts/lib/requirejs/require.js',
-                    dest: `${DIST_DIR}/public/javascripts/lib/requirejs/require.js`
+                    cwd: 'public/resources',
+                    src: ['**/*'],
+                    dest: 'dist/resources'
                 }]
             }
         }
+
+
     });
 
 
@@ -77,13 +72,16 @@ module.exports = function(grunt) {
     // we can only load these if they are in our package.json
     // make sure you have run npm install so our app can find these
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-bower-requirejs');
-    grunt.loadNpmTasks('grunt-contrib-requirejs');
-    grunt.loadNpmTasks('grunt-exec');
+    grunt.loadNpmTasks('grunt-css-import');
+    grunt.loadNpmTasks('grunt-contrib-pug');
+    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-copy');
 
-    grunt.registerTask('default', ['jshint', 'bowerRequirejs', 'requirejs',
-        'exec:compileCSS', 'exec:removeDistDir', 'copy', 'exec:removeTmpFiles'
-    ]);
+    grunt.registerTask('default', ['jshint', 'css_import', 'pug', 'browserify',
+        'uglify', 'copy']);
+
+    grunt.registerTask('dev', ['jshint', 'css_import', 'pug', 'browserify',
+        'copy']);
 
 };

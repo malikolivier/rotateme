@@ -13,7 +13,7 @@
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: three finter swipe
 
-define(['three'], function(THREE) {
+module.exports = function(THREE) {
 
 THREE.OrbitControls = function ( object, domElement ) {
 
@@ -1021,4 +1021,4 @@ return {
     OrbitControls: THREE.OrbitControls
 };
 
-});
+};
