@@ -5,7 +5,18 @@ var Whammy = require('./whammy');
 require('./OrbitControls')(THREE);
 require('./PLYLoader')(THREE);
 
-var CENTER_Y = 0.85;
+var CENTER_Y = 0;
+
+var addMeshToScene = function(mesh) {
+    mesh.name = "human";
+    // Set material to DoubleSide to enable raycasting from within the mesh
+    mesh.material.side = THREE.DoubleSide;
+    var scene = Render.getScene();
+    scene.remove(scene.getObjectByName("human"));
+    scene.add(mesh);
+};
+
+
 var Render = {
     debugging: false,
     // shaderLoaded: function called back when shaders are finished loading
@@ -325,12 +336,7 @@ var Render = {
                 } else {
                     throw "Unknown texture type as argument: " + textures;
                 }
-                humanMesh.name = "human";
-                // Set material to DoubleSide to enable raycasting from within the mesh
-                humanMesh.material.side = THREE.DoubleSide;
-                var scene = Render.getScene();
-                scene.remove(scene.getObjectByName("human"));
-                scene.add(humanMesh);
+                addMeshToScene(humanMesh);
             });
         };
     })(),
@@ -343,10 +349,8 @@ var Render = {
                 vertexColors: THREE.VertexColors
             });
             var mesh = new THREE.Mesh( geometry, material );
-            mesh.rotateY(Math.PI/2);
-            mesh.name = "human";
             mesh.box = new THREE.Box3().setFromObject(mesh);
-            var scalingFactor = 1.5/(Math.max(mesh.box.getSize().x, mesh.box.getSize().y, mesh.box.getSize().z));
+            var scalingFactor = 1.6/(Math.max(mesh.box.getSize().x, mesh.box.getSize().y, mesh.box.getSize().z));
             mesh.scale.set(scalingFactor, scalingFactor, scalingFactor);
             // Computer Vertex Normals to display the object properly
             mesh.traverse( function ( child ) {
@@ -355,13 +359,8 @@ var Render = {
                 child.geometry.computeVertexNormals();
               }
             });
-
-            var newBox = new THREE.Box3().setFromObject(mesh);
-            mesh.position.y += newBox.getSize().y / 2 + CENTER_Y/4;
-
-            var scene = Render.getScene();
-            scene.remove(scene.getObjectByName("human"));
-            scene.add(mesh);
+            mesh.position.y += 0.85;
+            addMeshToScene(mesh);
         };
     })(),
 
@@ -369,6 +368,13 @@ var Render = {
         var mesh = Render.getMesh();
         if (mesh) {
             mesh.rotation.y += Math.PI / 2 * direction;
+        }
+    },
+
+    reverseMesh: function() {
+        var mesh = Render.getMesh();
+        if (mesh) {
+            mesh.rotation.x += Math.PI;
         }
     }
 
@@ -382,6 +388,7 @@ setTimeout( function() {
     window.setAutoRotateSpeed = Render.setAutoRotateSpeed;
     window.setCameraAutoRotate = Render.setCameraAutoRotate;
     window.setCameraAutoRotateSpeed = Render.setCameraAutoRotateSpeed;
+    window.reverseMesh = Render.reverseMesh;
 }, 1000);
 
 module.exports = Render;

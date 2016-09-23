@@ -5,13 +5,14 @@ block content
     div.form-horizontal.small
         div.form-group
             label.control-label.col-sm-3 Choose your background: 
-            div.col-sm-5
+            div.col-sm-4
                 button(onclick="changeBG('castle', 'jpg')") Castle
                 button(onclick="changeBG('alps', 'jpg')") Swiss
                 button(onclick="changeBG('trafalgar', 'jpg')") Trafalgar
                 button(onclick="changeBG('grey', 'png')") Grey
                 button(onclick="changeBG('blue', 'png')") Light Blue
-                
+            div.col-sm-1
+                button(onclick="reverseMesh()") 颠倒
             div.col-sm-4 Controls:
                 ul
                     li Right-Click OR 1-finger: Rotate
