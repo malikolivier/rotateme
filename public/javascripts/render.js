@@ -346,7 +346,7 @@ var Render = {
             mesh.rotateY(Math.PI/2);
             mesh.name = "human";
             mesh.box = new THREE.Box3().setFromObject(mesh);
-            var scalingFactor = 1/(Math.max(mesh.box.getSize().x, mesh.box.getSize().y, mesh.box.getSize().z));
+            var scalingFactor = 1.5/(Math.max(mesh.box.getSize().x, mesh.box.getSize().y, mesh.box.getSize().z));
             mesh.scale.set(scalingFactor, scalingFactor, scalingFactor);
             // Computer Vertex Normals to display the object properly
             mesh.traverse( function ( child ) {
@@ -357,7 +357,7 @@ var Render = {
             });
 
             var newBox = new THREE.Box3().setFromObject(mesh);
-            mesh.position.y += newBox.getSize().y / 2 + CENTER_Y/2;
+            mesh.position.y += newBox.getSize().y / 2 + CENTER_Y/4;
 
             var scene = Render.getScene();
             scene.remove(scene.getObjectByName("human"));
